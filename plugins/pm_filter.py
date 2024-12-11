@@ -66,7 +66,7 @@ async def give_filter(client, message):
                         reply_msg = await message.reply_text(f"<b><i>Searching For {message.text} 🔍</i></b>")
                         await auto_filter(client, message.text, message, reply_msg, ai_search)
         else:  # If PM_SEARCH is False
-            await bot.send_message(chat_id=LOG_CHANNEL, text=f"<b>#𝐏𝐌_𝐌𝐒𝐆\n\nNᴀᴍᴇ : {user}\n\nID : {user_id}\n\nMᴇssᴀɢᴇ : {content}</b>")
+            await client.send_message(chat_id=LOG_CHANNEL, text=f"<b>#𝐆𝐑𝐎𝐔𝐏_𝐌𝐒𝐆\n\nNᴀᴍᴇ : {user}\n\nID : {user_id}\n\nMᴇssᴀɢᴇ : {message.text}</b>")
             return # Return without replying
         
     else: #a better logic to avoid repeated lines of code in auto_filter function

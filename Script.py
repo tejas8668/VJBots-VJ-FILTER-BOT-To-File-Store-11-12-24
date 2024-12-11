@@ -514,28 +514,9 @@ Aᴠᴀɪʟᴀʙʟᴇ ᴄᴏᴍᴍᴀɴᴅs:
 Hey <a href='tg://settings'>ᴍʏ ғʀɪᴇɴᴅ</a> 
 
 
- Now you can earn money on Telegram too.
-
- You must have 1 group to earn money by telegram.
- If you have a group, you can earn money by adding our bot to your group.
-
- The more members you have in your group, the higher your income will be.
-
- How and what to do
-
- Step 1: Administer this VJ-FILTER-BOT bot to your group
-
- Step 2: Add your website and API
-
- Exp: /shortlink omegalinks.in 4b392f8eb6ad711fbe58
-
- Add a video
-
- 👇 How to add 👇
-
- Exp: /set_tutorial video link
-
-Also your tutorial will be Added Your Group..."""
+ This feature is currently inactive. We will activate it soon.
+ 
+ Just Wait For It..."""
 
     TELUGU_INFO = """
 హే <a href='tg://settings'>ᴍʏ ғʀɪᴇɴᴅ</a> 

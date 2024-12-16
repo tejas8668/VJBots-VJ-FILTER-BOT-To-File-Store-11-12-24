@@ -19,6 +19,14 @@ BOT_TOKEN = environ.get('BOT_TOKEN', "")
 # This Pictures Is For Start Message Picture, You Can Add Multiple By Giving One Space Between Each.
 PICS = (environ.get('PICS', 'https://graph.org/file/ce1723991756e48c35aa1.jpg')).split()
 
+# Website Info:
+WEBSITE_URL_MODE = bool(environ.get('WEBSITE_URL_MODE', True)) # Set True or False
+
+# If Website Url Mode Is True Then Fill All Required Variable, If False Then Don't Fill.
+WEBSITE_URL = environ.get("WEBSITE_URL", "https://moviesmarketfile.blogspot.com/2024/08/movies-market.html") # For More Information Check Video On Yt - @Tech_VJ
+
+
+
 
 # Admins & Users
 ADMINS = [int(admin) if id_pattern.search(admin) else admin for admin in environ.get('ADMINS', '6018060368').split()] # For Multiple Id Use One Space Between Each.

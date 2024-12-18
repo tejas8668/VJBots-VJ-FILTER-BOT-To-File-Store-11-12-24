@@ -9,6 +9,41 @@ from Script import script
 
 id_pattern = re.compile(r'^.\d+$')
 
+
+
+class Config(object):
+    CHANNELS = {
+        "group_A": {
+            "sources": ["-1002487065354"],
+            "destinations": ["-1002464896968", "-1002426553583", "-1002398034096"]
+        },
+        "group_B": {
+            "sources": ["-1002349374753"],
+            "destinations": ["-1002117648544"]
+        },
+        "group_C": {
+            "sources": ["-1002377412867"],
+            "destinations": ["-1002208109923", "-1002029626559"]
+        },
+        "group_D": {
+            "sources": ["-1002402818813"],
+            "destinations": ["-1002226506656", "-1002129755717"]
+        },
+        "group_E": {
+            "sources": ["00"],
+            "destinations": ["00"]
+        },
+        "group_F": {
+            "sources": ["00"],
+            "destinations": ["00"]
+        },
+        "group_G": {
+            "sources": ["00"],
+            "destinations": ["00"]
+        }
+    }
+
+
 # Bot information
 SESSION = environ.get('SESSION', 'TechVJBot')
 API_ID = int(environ.get('API_ID', '27710337'))

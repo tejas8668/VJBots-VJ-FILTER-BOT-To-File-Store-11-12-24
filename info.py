@@ -61,40 +61,6 @@ WEBSITE_URL_MODE = bool(environ.get('WEBSITE_URL_MODE', False)) # Set True or Fa
 WEBSITE_URL = environ.get("WEBSITE_URL", "https://moviesmarketfile.blogspot.com/2024/08/movies-market.html") # For More Information Check Video On Yt - @Tech_VJ
 
 
-CHANNELS = {
-    "group_A": {
-        "sources": ["-1002487065354"],
-        "destinations": ["-1002464896968", "-1002426553583", "-1002398034096"]
-    },
-    "group_B": {
-        "sources": ["-1002349374753"],
-        "destinations": ["-1002117648544"]
-    },
-    "group_C": {
-        "sources": ["-1002377412867"],
-        "destinations": ["-1002208109923", "-1002029626559"]
-    },
-    "group_D": {
-        "sources": ["-1002402818813"],
-        "destinations": ["-1002226506656", "-1002129755717"]
-    },
-    "group_E": {
-        "sources": ["00"],
-        "destinations": ["00"]
-    },
-    "group_F": {
-        "sources": ["00"],
-        "destinations": ["00"]
-    },
-    "group_G": {
-        "sources": ["00"],
-        "destinations": ["00"]
-    }
-}
-
-
-
-
 
 # Admins & Users
 ADMINS = [int(admin) if id_pattern.search(admin) else admin for admin in environ.get('ADMINS', '6018060368').split()] # For Multiple Id Use One Space Between Each.

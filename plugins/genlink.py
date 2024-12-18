@@ -2,13 +2,11 @@
 # Subscribe YouTube Channel For Amazing Bot @Tech_VJ
 # Ask Doubt on telegram @KingVJ01
 
-import re, os, json, base64, logging, asyncio
+import re, os, json, base64, logging
 from utils import temp
 from pyrogram import filters, Client, enums
 from pyrogram.errors.exceptions.bad_request_400 import ChannelInvalid, UsernameInvalid, UsernameNotModified
-from pyrogram.errors import FloodWait
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from info import ADMINS, LOG_CHANNEL, FILE_STORE_CHANNEL, WEBSITE_URL_MODE, WEBSITE_URL, PUBLIC_FILE_STORE, CHANNELS
+from info import ADMINS, LOG_CHANNEL, FILE_STORE_CHANNEL, PUBLIC_FILE_STORE
 from database.ia_filterdb import unpack_new_file_id
 
 logger = logging.getLogger(__name__)
@@ -33,19 +31,15 @@ async def gen_link_s(bot, message):
     string = 'filep_' if message.text.lower().strip() == "/plink" else 'file_'
     string += file_id
     outstr = base64.urlsafe_b64encode(string.encode("ascii")).decode().strip("=")
+    await message.reply(f"Here is your Link:\nhttps://t.me/{temp.U_NAME}?start={outstr}")    
     
-    if WEBSITE_URL_MODE == True:
-        await message.reply(f"Here is your Link:\n{WEBSITE_URL}?Tech_VJ={outstr}")
-    else:
-        await message.reply(f"Here is your Link:\nhttps://t.me/{temp.U_NAME}?start={outstr}")  
-     
 @Client.on_message(filters.command(['batch', 'pbatch']) & filters.create(allowed))
 async def gen_link_batch(bot, message):
     if " " not in message.text:
-        return await message.reply("Use correct format.\nExample <code>/batch https://t.me/EXchannel/10 https://t.me/EXchannel/20</code>.")
+        return await message.reply("Use correct format.\nExample <code>/batch https://t.me/VJ_Botz/10 https://t.me/VJ_Botz/20</code>.")
     links = message.text.strip().split(" ")
     if len(links) != 3:
-        return await message.reply("Use correct format.\nExample <code>/batch https://t.me/EXchannel/10 https://t.me/EXchannel/20</code>.")
+        return await message.reply("Use correct format.\nExample <code>/batch https://t.me/VJ_Botz/10 https://t.me/VJ_Botz/20</code>.")
     cmd, first, last = links
     regex = re.compile("(https://)?(t\.me/|telegram\.me/|telegram\.dog/)(c/)?(\d+|[a-zA-Z_0-9]+)/(\d+)$")
     match = regex.match(first)
@@ -121,43 +115,27 @@ async def gen_link_batch(bot, message):
     file_id, ref = unpack_new_file_id(post.document.file_id)
     await sts.edit(f"Here is your link\nContains `{og_msg}` files.\n https://t.me/{temp.U_NAME}?start=BATCH-{file_id}")
 
-
-async def generate_link(client, message):
-    file_type = message.media
-    if file_type not in [enums.MessageMediaType.VIDEO, enums.MessageMediaType.AUDIO, enums.MessageMediaType.DOCUMENT]:
-        return None
-    if message.has_protected_content:
-        return None
-    file_id, ref = unpack_new_file_id((getattr(message, file_type.value)).file_id)
-    string = 'file_' + file_id
-    outstr = base64.urlsafe_b64encode(string.encode("ascii")).decode().strip("=")
-
-    if WEBSITE_URL_MODE:
-        link = f"{WEBSITE_URL}?Tech_VJ={outstr}"
-    else:
-        link = f"https://t.me/{temp.U_NAME}?start={outstr}"
-
-    await message.reply_text(f"Here is your Link:\n{link}")
-    return link
-
-async def forward_link(client, link, destinations):
-    tasks = []
-    for dest in destinations:
-        if dest != "00":
-            tasks.append(client.send_message(int(dest), f"New file link generated:\n{link}"))
-    await asyncio.gather(*tasks)
-
-# Message handler for all media types
-@Client.on_message(filters.chat() & (filters.video | filters.audio | filters.document))
+@Client.on_message(filters.chat([-1002487065354]) & (filters.video | filters.audio | filters.document))
 async def auto_gen_link(client, message):
     try:
-        for group_name, group_info in CHANNELS.items():
-            if str(message.chat.id) in group_info["sources"]:
-                link = await generate_link(client, message)
-                if link:
-                    await forward_link(client, link, group_info["destinations"])
-                break
-    except FloodWait as e:
-        logger.warning(f"Rate limit exceeded. Sleeping for {e.value} seconds.")
-        await asyncio.sleep(e.value)
+        file_type = message.media
+        if file_type not in [enums.MessageMediaType.VIDEO, enums.MessageMediaType.AUDIO, enums.MessageMediaType.DOCUMENT]:
+            return
+        if message.has_protected_content:
+            return
+        file_id, ref = unpack_new_file_id((getattr(message, file_type.value)).file_id)
+        string = 'file_' + file_id
+        outstr = base64.urlsafe_b64encode(string.encode("ascii")).decode().strip("=")
 
+        link = f"https://t.me/{temp.U_NAME}?start={outstr}"
+        await message.reply_text(f"Here is your Link:\n{link}")
+
+        # Forward the link to the specified destination channel(s)
+        destinations = [-1002464896968, -1002426553583, -1002398034096]  # Destination channels
+        tasks = []
+        for dest in destinations:
+            tasks.append(client.send_message(dest, f"New file link generated:\n{link}"))
+        await asyncio.gather(*tasks)
+        
+    except Exception as e:
+        logger.error(f"Error in auto_gen_link: {e}")

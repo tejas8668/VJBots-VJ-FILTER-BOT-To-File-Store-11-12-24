@@ -6,7 +6,7 @@ import re, os, json, base64, logging, asyncio
 from utils import temp
 from pyrogram import filters, Client, enums
 from pyrogram.errors.exceptions.bad_request_400 import ChannelInvalid, UsernameInvalid, UsernameNotModified
-from info import ADMINS, LOG_CHANNEL, FILE_STORE_CHANNEL, PUBLIC_FILE_STORE
+from info import ADMINS, LOG_CHANNEL, FILE_STORE_CHANNEL, WEBSITE_URL_MODE, WEBSITE_URL, PUBLIC_FILE_STORE
 from info import Config
 from database.ia_filterdb import unpack_new_file_id
 
@@ -32,7 +32,11 @@ async def gen_link_s(bot, message):
     string = 'filep_' if message.text.lower().strip() == "/plink" else 'file_'
     string += file_id
     outstr = base64.urlsafe_b64encode(string.encode("ascii")).decode().strip("=")
-    await message.reply(f"Here is your Link:\nhttps://t.me/{temp.U_NAME}?start={outstr}")    
+    
+    if WEBSITE_URL_MODE == True:
+        await message.reply(f"Here is your Link:\n{WEBSITE_URL}?Tech_VJ={outstr}")
+    else:
+        await message.reply(f"Here is your Link:\nhttps://t.me/{temp.U_NAME}?start={outstr}")    
     
 @Client.on_message(filters.command(['batch', 'pbatch']) & filters.create(allowed))
 async def gen_link_batch(bot, message):
@@ -126,7 +130,7 @@ async def generate_link(client, message):
     string = 'file_' + file_id
     outstr = base64.urlsafe_b64encode(string.encode("ascii")).decode().strip("=")
 
-    if WEBSITE_URL_MODE:
+    if WEBSITE_URL_MODE == True:
         link = f"{WEBSITE_URL}?Tech_VJ={outstr}"
     else:
         link = f"https://t.me/{temp.U_NAME}?start={outstr}"

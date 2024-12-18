@@ -28,8 +28,8 @@ WEBSITE_URL = environ.get("WEBSITE_URL", "https://moviesmarketfile.blogspot.com/
 
 CHANNELS = {
     "group_A": {
-        "sources": ["-1002488212445"],
-        "destinations": ["-1001837851141", "-1002015902532", "-1001871384871"]
+        "sources": ["-1002487065354"],
+        "destinations": ["-1002464896968", "-1002426553583", "-1002398034096"]
     },
     "group_B": {
         "sources": ["-1002349374753"],

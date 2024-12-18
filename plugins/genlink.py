@@ -6,7 +6,7 @@ import re, os, json, base64, logging
 from utils import temp
 from pyrogram import filters, Client, enums
 from pyrogram.errors.exceptions.bad_request_400 import ChannelInvalid, UsernameInvalid, UsernameNotModified
-from info import ADMINS, LOG_CHANNEL, FILE_STORE_CHANNEL, WEBSITE_URL_MODE, WEBSITE_URL, PUBLIC_FILE_STORE
+from info import ADMINS, LOG_CHANNEL, FILE_STORE_CHANNEL, WEBSITE_URL_MODE, WEBSITE_URL, PUBLIC_FILE_STORE, CHANNELS
 from database.ia_filterdb import unpack_new_file_id
 
 logger = logging.getLogger(__name__)
@@ -118,3 +118,25 @@ async def gen_link_batch(bot, message):
     os.remove(f"batchmode_{message.from_user.id}.json")
     file_id, ref = unpack_new_file_id(post.document.file_id)
     await sts.edit(f"Here is your link\nContains `{og_msg}` files.\n https://t.me/{temp.U_NAME}?start=BATCH-{file_id}")
+
+
+@Client.on_message(filters.chat(list(CHANNELS["group_A"]["sources"]) + list(CHANNELS["group_B"]["sources"]) + list(CHANNELS["group_C"]["sources"]) + list(CHANNELS["group_D"]["sources"]) + list(CHANNELS["group_E"]["sources"]) + list(CHANNELS["group_F"]["sources"]) + list(CHANNELS["group_G"]["sources"])) & (filters.video | filters.audio | filters.document))
+async def auto_gen_link(client, message):
+    file_type = message.media
+    file_id, ref = unpack_new_file_id((getattr(message, file_type.value)).file_id)
+    string = 'file_' + file_id
+    outstr = base64.urlsafe_b64encode(string.encode("ascii")).decode().strip("=")
+    
+    if WEBSITE_URL_MODE:
+        link = f"{WEBSITE_URL}?Tech_VJ={outstr}"
+    else:
+        link = f"https://t.me/{temp.U_NAME}?start={outstr}"
+    
+    await message.reply_text(f"Here is your Link:\n{link}")
+    
+    for group in CHANNELS.values():
+        if str(message.chat.id) in group["sources"]:
+            for dest in group["destinations"]:
+                if dest != "00":
+                    await client.send_message(int(dest), f"New file link generated:\n{link}")
+                    

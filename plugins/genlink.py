@@ -147,53 +147,21 @@ async def forward_link(client, message, link, destinations):
             tasks.append(client.send_message(int(dest), f"New file link generated:\n{link}"))
     await asyncio.gather(*tasks)
 
-# Group A
-@Client.on_message(filters.chat([int(src) for src in CHANNELS["group_A"]["sources"]]) & (filters.video | filters.audio | filters.document))
-async def auto_gen_link_group_a(client, message):
+async def process_group(client, message, group_key):
     link = await generate_link(client, message)
     if link:
-        await forward_link(client, message, link, CHANNELS["group_A"]["destinations"])
+        await forward_link(client, message, link, CHANNELS[group_key]["destinations"])
 
-# Group B
-@Client.on_message(filters.chat([int(src) for src in CHANNELS["group_B"]["sources"]]) & (filters.video | filters.audio | filters.document))
-async def auto_gen_link_group_b(client, message):
-    link = await generate_link(client, message)
-    if link:
-        await forward_link(client, message, link, CHANNELS["group_B"]["destinations"])
-
-# Group C
-@Client.on_message(filters.chat([int(src) for src in CHANNELS["group_C"]["sources"]]) & (filters.video | filters.audio | filters.document))
-async def auto_gen_link_group_c(client, message):
-    link = await generate_link(client, message)
-    if link:
-        await forward_link(client, message, link, CHANNELS["group_C"]["destinations"])
-
-# Group D
-@Client.on_message(filters.chat([int(src) for src in CHANNELS["group_D"]["sources"]]) & (filters.video | filters.audio | filters.document))
-async def auto_gen_link_group_d(client, message):
-    link = await generate_link(client, message)
-    if link:
-        await forward_link(client, message, link, CHANNELS["group_D"]["destinations"])
-
-# Group E
-@Client.on_message(filters.chat([int(src) for src in CHANNELS["group_E"]["sources"]]) & (filters.video | filters.audio | filters.document))
-async def auto_gen_link_group_e(client, message):
-    link = await generate_link(client, message)
-    if link:
-        await forward_link(client, message, link, CHANNELS["group_E"]["destinations"])
-
-# Group F
-@Client.on_message(filters.chat([int(src) for src in CHANNELS["group_F"]["sources"]]) & (filters.video | filters.audio | filters.document))
-async def auto_gen_link_group_f(client, message):
-    link = await generate_link(client, message)
-    if link:
-        await forward_link(client, message, link, CHANNELS["group_F"]["destinations"])
-
-# Group G
-@Client.on_message(filters.chat([int(src) for src in CHANNELS["group_G"]["sources"]]) & (filters.video | filters.audio | filters.document))
-async def auto_gen_link_group_g(client, message):
-    link = await generate_link(client, message)
-    if link:
-        await forward_link(client, message, link, CHANNELS["group_G"]["destinations"])
+# Message handler
+@Client.on_message((filters.video | filters.audio | filters.document))
+async def auto_gen_link(client, message):
+    try:
+        for group_key in CHANNELS.keys():
+            if str(message.chat.id) in CHANNELS[group_key]["sources"]:
+                await process_group(client, message, group_key)
+                break
+    except FloodWait as e:
+        logger.warning(f"Rate limit exceeded. Sleeping for {e.value} seconds.")
+        await asyncio.sleep(e.value)
 
 # Other handlers (gen_link_s, gen_link_batch, etc.) remain unchanged

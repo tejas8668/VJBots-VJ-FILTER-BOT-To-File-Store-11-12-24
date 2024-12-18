@@ -120,6 +120,12 @@ async def gen_link_batch(bot, message):
     await sts.edit(f"Here is your link\nContains `{og_msg}` files.\n https://t.me/{temp.U_NAME}?start=BATCH-{file_id}")
 
 
+all_sources = []
+for group in CHANNELS.values():
+    all_sources.extend(group["sources"])
+
+
+
 @Client.on_message(filters.chat(all_sources) & (filters.video | filters.audio | filters.document))
 async def auto_gen_link(client, message):
     file_type = message.media

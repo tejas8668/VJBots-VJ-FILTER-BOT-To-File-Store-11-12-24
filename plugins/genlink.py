@@ -147,10 +147,10 @@ async def forward_link(client, link, destinations):
             tasks.append(client.send_message(int(dest), f"New file link generated:\n{link}"))
     await asyncio.gather(*tasks)
 
-@Client.on_message(filters.video | filters.audio | filters.document)
+# Message handler for all media types
+@Client.on_message(filters.chat() & (filters.video | filters.audio | filters.document))
 async def auto_gen_link(client, message):
     try:
-        # Check all groups in CHANNELS
         for group_name, group_info in CHANNELS.items():
             if str(message.chat.id) in group_info["sources"]:
                 link = await generate_link(client, message)
@@ -161,4 +161,3 @@ async def auto_gen_link(client, message):
         logger.warning(f"Rate limit exceeded. Sleeping for {e.value} seconds.")
         await asyncio.sleep(e.value)
 
-# Other handlers (gen_link_s, gen_link_batch, etc.) remain unchanged

@@ -140,25 +140,22 @@ async def generate_link(client, message):
     await message.reply_text(f"Here is your Link:\n{link}")
     return link
 
-async def forward_link(client, message, link, destinations):
+async def forward_link(client, link, destinations):
     tasks = []
     for dest in destinations:
         if dest != "00":
             tasks.append(client.send_message(int(dest), f"New file link generated:\n{link}"))
     await asyncio.gather(*tasks)
 
-async def process_group(client, message, group_key):
-    link = await generate_link(client, message)
-    if link:
-        await forward_link(client, message, link, CHANNELS[group_key]["destinations"])
-
-# Message handler
-@Client.on_message((filters.video | filters.audio | filters.document))
+@Client.on_message(filters.video | filters.audio | filters.document)
 async def auto_gen_link(client, message):
     try:
-        for group_key in CHANNELS.keys():
-            if str(message.chat.id) in CHANNELS[group_key]["sources"]:
-                await process_group(client, message, group_key)
+        # Check all groups in CHANNELS
+        for group_name, group_info in CHANNELS.items():
+            if str(message.chat.id) in group_info["sources"]:
+                link = await generate_link(client, message)
+                if link:
+                    await forward_link(client, link, group_info["destinations"])
                 break
     except FloodWait as e:
         logger.warning(f"Rate limit exceeded. Sleeping for {e.value} seconds.")

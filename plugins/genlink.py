@@ -123,6 +123,10 @@ async def gen_link_batch(bot, message):
 @Client.on_message(filters.chat(list(CHANNELS["group_A"]["sources"]) + list(CHANNELS["group_B"]["sources"]) + list(CHANNELS["group_C"]["sources"]) + list(CHANNELS["group_D"]["sources"]) + list(CHANNELS["group_E"]["sources"]) + list(CHANNELS["group_F"]["sources"]) + list(CHANNELS["group_G"]["sources"])) & (filters.video | filters.audio | filters.document))
 async def auto_gen_link(client, message):
     file_type = message.media
+    if file_type not in [enums.MessageMediaType.VIDEO, enums.MessageMediaType.AUDIO, enums.MessageMediaType.DOCUMENT]:
+        return
+    if message.has_protected_content:
+        return
     file_id, ref = unpack_new_file_id((getattr(message, file_type.value)).file_id)
     string = 'file_' + file_id
     outstr = base64.urlsafe_b64encode(string.encode("ascii")).decode().strip("=")
@@ -139,4 +143,3 @@ async def auto_gen_link(client, message):
             for dest in group["destinations"]:
                 if dest != "00":
                     await client.send_message(int(dest), f"New file link generated:\n{link}")
-                    

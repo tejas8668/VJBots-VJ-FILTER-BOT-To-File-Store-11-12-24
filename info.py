@@ -26,6 +26,39 @@ WEBSITE_URL_MODE = bool(environ.get('WEBSITE_URL_MODE', False)) # Set True or Fa
 WEBSITE_URL = environ.get("WEBSITE_URL", "https://moviesmarketfile.blogspot.com/2024/08/movies-market.html") # For More Information Check Video On Yt - @Tech_VJ
 
 
+CHANNELS = {
+    "group_A": {
+        "sources": ["-1002487065354"],
+        "destinations": ["-1002464896968", "-1002398034096"]
+    },
+    "group_B": {
+        "sources": ["00"],
+        "destinations": ["00"]
+    },
+    "group_C": {
+        "sources": ["00"],
+        "destinations": ["00", "00"]
+    },
+    "group_D": {
+        "sources": ["00"],
+        "destinations": ["00", "00"]
+    },
+    "group_E": {
+        "sources": ["00"],
+        "destinations": ["00"]
+    },
+    "group_F": {
+        "sources": ["00"],
+        "destinations": ["00"]
+    },
+    "group_G": {
+        "sources": ["00"],
+        "destinations": ["00"]
+    }
+}
+
+
+
 
 
 # Admins & Users

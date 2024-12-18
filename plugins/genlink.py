@@ -6,7 +6,6 @@ import re, os, json, base64, logging, asyncio
 from utils import temp
 from pyrogram import filters, Client, enums
 from pyrogram.errors.exceptions.bad_request_400 import ChannelInvalid, UsernameInvalid, UsernameNotModified
-from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from info import ADMINS, LOG_CHANNEL, FILE_STORE_CHANNEL, WEBSITE_URL_MODE, WEBSITE_URL, PUBLIC_FILE_STORE, CHANNELS
 from database.ia_filterdb import unpack_new_file_id
@@ -122,37 +121,85 @@ async def gen_link_batch(bot, message):
     await sts.edit(f"Here is your link\nContains `{og_msg}` files.\n https://t.me/{temp.U_NAME}?start=BATCH-{file_id}")
 
 
-# Create a combined list of all sources
-all_sources = []
-for group in CHANNELS.values():
-    all_sources.extend(group["sources"])
+async def allowed(_, __, message):
+    if PUBLIC_FILE_STORE:
+        return True
+    if message.from_user and message.from_user.id in ADMINS:
+        return True
+    return False
 
-@Client.on_message(filters.chat(all_sources) & (filters.video | filters.audio | filters.document))
-async def auto_gen_link(client, message):
-    try:
-        file_type = message.media
-        if file_type not in [enums.MessageMediaType.VIDEO, enums.MessageMediaType.AUDIO, enums.MessageMediaType.DOCUMENT]:
-            return
-        if message.has_protected_content:
-            return
-        file_id, ref = unpack_new_file_id((getattr(message, file_type.value)).file_id)
-        string = 'file_' + file_id
-        outstr = base64.urlsafe_b64encode(string.encode("ascii")).decode().strip("=")
+async def generate_link(client, message):
+    file_type = message.media
+    if file_type not in [enums.MessageMediaType.VIDEO, enums.MessageMediaType.AUDIO, enums.MessageMediaType.DOCUMENT]:
+        return None
+    if message.has_protected_content:
+        return None
+    file_id, ref = unpack_new_file_id((getattr(message, file_type.value)).file_id)
+    string = 'file_' + file_id
+    outstr = base64.urlsafe_b64encode(string.encode("ascii")).decode().strip("=")
 
-        if WEBSITE_URL_MODE:
-            link = f"{WEBSITE_URL}?Tech_VJ={outstr}"
-        else:
-            link = f"https://t.me/{temp.U_NAME}?start={outstr}"
+    if WEBSITE_URL_MODE:
+        link = f"{WEBSITE_URL}?Tech_VJ={outstr}"
+    else:
+        link = f"https://t.me/{temp.U_NAME}?start={outstr}"
 
-        await message.reply_text(f"Here is your Link:\n{link}")
+    await message.reply_text(f"Here is your Link:\n{link}")
+    return link
 
-        for group in CHANNELS.values():
-            if str(message.chat.id) in map(str, group["sources"]):
-                tasks = []
-                for dest in group["destinations"]:
-                    if dest != "00":
-                        tasks.append(client.send_message(int(dest), f"New file link generated:\n{link}"))
-                await asyncio.gather(*tasks)
-    except FloodWait as e:
-        logger.warning(f"Rate limit exceeded. Sleeping for {e.value} seconds.")
-        await asyncio.sleep(e.value)
+async def forward_link(client, message, link, destinations):
+    tasks = []
+    for dest in destinations:
+        if dest != "00":
+            tasks.append(client.send_message(int(dest), f"New file link generated:\n{link}"))
+    await asyncio.gather(*tasks)
+
+# Group A
+@Client.on_message(filters.chat(map(int, CHANNELS["group_A"]["sources"])) & (filters.video | filters.audio | filters.document))
+async def auto_gen_link_group_a(client, message):
+    link = await generate_link(client, message)
+    if link:
+        await forward_link(client, message, link, CHANNELS["group_A"]["destinations"])
+
+# Group B
+@Client.on_message(filters.chat(map(int, CHANNELS["group_B"]["sources"])) & (filters.video | filters.audio | filters.document))
+async def auto_gen_link_group_b(client, message):
+    link = await generate_link(client, message)
+    if link:
+        await forward_link(client, message, link, CHANNELS["group_B"]["destinations"])
+
+# Group C
+@Client.on_message(filters.chat(map(int, CHANNELS["group_C"]["sources"])) & (filters.video | filters.audio | filters.document))
+async def auto_gen_link_group_c(client, message):
+    link = await generate_link(client, message)
+    if link:
+        await forward_link(client, message, link, CHANNELS["group_C"]["destinations"])
+
+# Group D
+@Client.on_message(filters.chat(map(int, CHANNELS["group_D"]["sources"])) & (filters.video | filters.audio | filters.document))
+async def auto_gen_link_group_d(client, message):
+    link = await generate_link(client, message)
+    if link:
+        await forward_link(client, message, link, CHANNELS["group_D"]["destinations"])
+
+# Group E
+@Client.on_message(filters.chat(map(int, CHANNELS["group_E"]["sources"])) & (filters.video | filters.audio | filters.document))
+async def auto_gen_link_group_e(client, message):
+    link = await generate_link(client, message)
+    if link:
+        await forward_link(client, message, link, CHANNELS["group_E"]["destinations"])
+
+# Group F
+@Client.on_message(filters.chat(map(int, CHANNELS["group_F"]["sources"])) & (filters.video | filters.audio | filters.document))
+async def auto_gen_link_group_f(client, message):
+    link = await generate_link(client, message)
+    if link:
+        await forward_link(client, message, link, CHANNELS["group_F"]["destinations"])
+
+# Group G
+@Client.on_message(filters.chat(map(int, CHANNELS["group_G"]["sources"])) & (filters.video | filters.audio | filters.document))
+async def auto_gen_link_group_g(client, message):
+    link = await generate_link(client, message)
+    if link:
+        await forward_link(client, message, link, CHANNELS["group_G"]["destinations"])
+
+# Other handlers (gen_link_s, gen_link_batch, etc.) remain unchanged
